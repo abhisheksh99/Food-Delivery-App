@@ -1,6 +1,8 @@
+import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "./ui/button";
 
 const MainNav = () => {
+    const {loginWithRedirect} = useAuth0()
   return (
     <nav className="flex items-center justify-end p-4">
       <Button
@@ -12,6 +14,8 @@ const MainNav = () => {
                    shadow-sm hover:shadow-md 
                    transition-all duration-300 ease-in-out 
                    transform hover:scale-105"
+
+        onClick={async () => await loginWithRedirect()}
       >
         Login
       </Button>
