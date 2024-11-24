@@ -13,6 +13,7 @@ import Cart from "./components/Cart";
 import Resturant from "./admin/Resturant";
 import AddMenu from "./admin/AddMenu";
 import Orders from "./admin/Orders";
+import Order from "./components/Order";
 
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
           <Route path="/search/:id" element={<SearchPage/>} />
           <Route path="/restaurant/:id" element={<ResturantDetails/>} />
           <Route path="/cart" element={<Cart/>} />
+          <Route path="/order/status" element={<Order/>} />
 
 
           {/* Admin */}
