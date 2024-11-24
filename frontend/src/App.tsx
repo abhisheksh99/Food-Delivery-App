@@ -10,6 +10,7 @@ import Profile from "./components/Profile";
 import SearchPage from "./components/SearchPage";
 import ResturantDetails from "./components/ResturantDetails";
 import Cart from "./components/Cart";
+import Resturant from "./admin/Resturant";
 
 
 export default function Home() {
@@ -22,6 +23,10 @@ export default function Home() {
           <Route path="/search/:id" element={<SearchPage/>} />
           <Route path="/restaurant/:id" element={<ResturantDetails/>} />
           <Route path="/cart" element={<Cart/>} />
+
+
+          {/* Admin */}
+          <Route path="/admin/restaurant" element={<Resturant/>} />
 
         </Route>
 
