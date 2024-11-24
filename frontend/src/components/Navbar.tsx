@@ -35,12 +35,11 @@ import {
   SheetDescription,
   SheetFooter,
   SheetClose,
-} from "@/components/ui/sheet"; // Ensure the Sheet components are properly imported
+} from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
 const Navbar = () => {
-  const admin = true;
-  const cart = [1, 2, 3]; // Example cart items for demo
+  const cart = [1, 2, 3];
   const loading = false;
   const user = { admin: true, profilePicture: "" };
 
@@ -56,7 +55,9 @@ const Navbar = () => {
     <div className="max-w-7xl mx-auto">
       <div className="flex items-center justify-between h-14">
         <Link to="/">
-          <h1 className="font-bold md:font-extrabold text-2xl">Flavor Fiesta</h1>
+          <h1 className="font-bold md:font-extrabold text-2xl">
+            Flavor Fiesta
+          </h1>
         </Link>
         <div className="hidden md:flex items-center gap-10">
           <div className="hidden md:flex items-center gap-6">
