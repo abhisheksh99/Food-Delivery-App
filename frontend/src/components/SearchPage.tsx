@@ -1,4 +1,4 @@
-import { Badge, Globe, MapPin, X } from "lucide-react";
+import { Globe, MapPin, X } from "lucide-react";
 import FilterPage from "./FilterPage";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { Skeleton } from "./ui/skeleton";
+import { Badge } from "./ui/badge";
 
 const SearchPage = () => {
   const { params } = useParams();
