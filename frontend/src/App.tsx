@@ -6,6 +6,7 @@ import ForgotPassword from "./auth/ForgotPassword";
 import ResetPassword from "./auth/ResetPassword";
 import VerifyEmail from "./auth/VerifyEmail";
 import HeroSection from "./components/HeroSection";
+import Profile from "./components/Profile";
 
 export default function Home() {
   return (
@@ -13,6 +14,8 @@ export default function Home() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index={true} element={<HeroSection />} />
+          <Route path="/profile" element={<Profile />} />
+
         </Route>
 
         <Route path="/login" element={<Login />} />
