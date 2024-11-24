@@ -9,6 +9,7 @@ import HeroSection from "./components/HeroSection";
 import Profile from "./components/Profile";
 import SearchPage from "./components/SearchPage";
 import ResturantDetails from "./components/ResturantDetails";
+import Cart from "./components/Cart";
 
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/search/:id" element={<SearchPage/>} />
           <Route path="/restaurant/:id" element={<ResturantDetails/>} />
+          <Route path="/cart" element={<Cart/>} />
 
         </Route>
 
