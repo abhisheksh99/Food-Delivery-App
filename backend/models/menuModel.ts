@@ -1,11 +1,36 @@
-import mongoose from "mongoose";
+import mongoose, { Document} from "mongoose";
 
-const menuSchema = new mongoose.Schema({
+interface IMenu extends Document {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+}
 
-},{
-    timestamps:true
-})
+const menuSchema = new mongoose.Schema<IMenu>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const Menu = mongoose.model("Menu",menuSchema)
+const Menu = mongoose.model<IMenu>("Menu", menuSchema);
 
-export default Menu
+export default Menu;
