@@ -15,7 +15,8 @@ import AddMenu from "./admin/AddMenu";
 import Orders from "./admin/Orders";
 import Order from "./components/Order";
 import { useUserStore } from "./store/useUserStore";
-
+import { useEffect } from "react";
+import Loading from "./components/Loading";
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, user } = useUserStore();
@@ -31,50 +32,108 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
 
 const AuthenticatedUser = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, user } = useUserStore();
-  if(isAuthenticated && user?.isVerified){
-    return <Navigate to="/" replace/>
+  if (isAuthenticated && user?.isVerified) {
+    return <Navigate to="/" replace />;
   }
   return children;
 };
 
-const AdminRoute = ({children}:{children:React.ReactNode}) => {
-  const {user, isAuthenticated} = useUserStore();
-  if(!isAuthenticated){
-    return <Navigate to="/login" replace/>
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isAuthenticated } = useUserStore();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
-  if(!user?.admin){
-    return <Navigate to="/" replace/>
+  if (!user?.admin) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
-}
+};
 
-export default function Home() {
+const App = () => {
+  const { checkAuthentication, isCheckingAuth } = useUserStore();
+
+  useEffect(() => {
+    checkAuthentication();
+  }, [checkAuthentication]);
+
+  if (isCheckingAuth) return <Loading />;
+
   return (
     <>
       <Routes>
-        <Route path="/" element={<ProtectedRoutes><MainLayout /></ProtectedRoutes>}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoutes>
+              <MainLayout />
+            </ProtectedRoutes>
+          }
+        >
           <Route index={true} element={<HeroSection />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/search/:id" element={<SearchPage/>} />
-          <Route path="/restaurant/:id" element={<ResturantDetails/>} />
-          <Route path="/cart" element={<Cart/>} />
-          <Route path="/order/status" element={<Order/>} />
-
+          <Route path="/search/:id" element={<SearchPage />} />
+          <Route path="/restaurant/:id" element={<ResturantDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/order/status" element={<Order />} />
 
           {/* Admin */}
-          <Route path="/admin/restaurant" element={<AdminRoute><Resturant/></AdminRoute>} />
-          <Route path="/admin/menu" element={<AdminRoute><AddMenu/></AdminRoute>} />
-          <Route path="/admin/orders" element={<AdminRoute><Orders/></AdminRoute>} />
-
+          <Route
+            path="/admin/restaurant"
+            element={
+              <AdminRoute>
+                <Resturant />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/menu"
+            element={
+              <AdminRoute>
+                <AddMenu />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminRoute>
+                <Orders />
+              </AdminRoute>
+            }
+          />
         </Route>
 
-        <Route path="/login" element={<AuthenticatedUser><Login /></AuthenticatedUser>} />
-        <Route path="/signup" element={<AuthenticatedUser><Signup /></AuthenticatedUser>} />
-        <Route path="/forgot-password" element={<AuthenticatedUser><ForgotPassword /></AuthenticatedUser>} />
-        <Route path="/reset-password" element={<AuthenticatedUser><ResetPassword /></AuthenticatedUser>} />
-        <Route path="/verify-email" element={<AuthenticatedUser><VerifyEmail /></AuthenticatedUser>} />
+        {/* Common */}
+        <Route
+          path="/login"
+          element={
+            <AuthenticatedUser>
+              <Login />
+            </AuthenticatedUser>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <AuthenticatedUser>
+              <Signup />
+            </AuthenticatedUser>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <AuthenticatedUser>
+              <ForgotPassword />
+            </AuthenticatedUser>
+          }
+        />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
       </Routes>
     </>
   );
-}
+};
+
+export default App;

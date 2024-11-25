@@ -43,6 +43,7 @@ const Navbar = () => {
   const cart = [1, 2, 3];
   const loading = false;
   const user = { admin: true, profilePicture: "" };
+  
 
   const logout = () => {
     console.log("Logout clicked");
