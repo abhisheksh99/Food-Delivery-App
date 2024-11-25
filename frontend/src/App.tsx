@@ -19,10 +19,16 @@ import { useEffect } from "react";
 import Loading from "./components/Loading";
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, user } = useUserStore();
+  const { isAuthenticated, user , isCheckingAuth} = useUserStore();
+
+  if (isCheckingAuth) {
+    return <Loading />;
+}
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
+
+
 
   if (!user?.isVerified) {
     return <Navigate to="/verify-email" replace />;

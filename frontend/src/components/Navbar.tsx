@@ -37,28 +37,19 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-
+import { useUserStore } from "@/store/useUserStore";
 
 const Navbar = () => {
+  const { user, isLoading, logout } = useUserStore();
   const cart = [1, 2, 3];
-  const loading = false;
-  const user = { admin: true, profilePicture: "" };
-  
 
-  const logout = () => {
-    console.log("Logout clicked");
-  };
-
-  const setTheme = (theme: string) => {
-    console.log(`Theme set to: ${theme}`);
-  };
 
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex items-center justify-between h-14">
         <Link to="/">
           <h1 className="font-bold md:font-extrabold text-2xl">
-            Flavor Fiesta 
+            Flavor Fiesta
           </h1>
         </Link>
         <div className="hidden md:flex items-center gap-10">
@@ -97,10 +88,10 @@ const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setTheme("light")}>
+                  <DropdownMenuItem >
                     Light
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  <DropdownMenuItem >
                     Dark
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -127,7 +118,7 @@ const Navbar = () => {
               </Avatar>
             </div>
             <div>
-              {loading ? (
+              {isLoading ? (
                 <Button className="bg-orange hover:bg-hoverOrange">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Please wait
@@ -144,12 +135,11 @@ const Navbar = () => {
           </div>
         </div>
         <div className="md:hidden lg:hidden">
-          {/* Mobile responsive */}
+          Mobile responsive
           <MobileNavbar
             user={user}
             logout={logout}
-            loading={loading}
-            setTheme={setTheme}
+            isLoading={isLoading}
           />
         </div>
       </div>
@@ -157,17 +147,8 @@ const Navbar = () => {
   );
 };
 
-const MobileNavbar = ({
-  user,
-  logout,
-  loading,
-  setTheme,
-}: {
-  user: any;
-  logout: () => void;
-  loading: boolean;
-  setTheme: (theme: string) => void;
-}) => {
+const MobileNavbar = () => {
+  const {user,isLoading,logout} = useUserStore();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -191,10 +172,10 @@ const MobileNavbar = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme("light")}>
+              <DropdownMenuItem >
                 Light
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <DropdownMenuItem >
                 Dark
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -258,7 +239,7 @@ const MobileNavbar = ({
             <h1 className="font-bold">Flavor Fiesta Admin</h1>
           </div>
           <SheetClose asChild>
-            {loading ? (
+            {isLoading ? (
               <Button className="bg-orange hover:bg-hoverOrange">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please wait
