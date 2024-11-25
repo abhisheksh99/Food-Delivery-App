@@ -7,7 +7,7 @@ import Order from '../models/orderModel';
 // Controller to create a new restaurant
 export const createRestaurant = async (req: Request, res: Response) => {
     try {
-        const { restaurantName, city, country, price, deliveryTime, cuisines } = req.body;
+        const { restaurantName, city, country, deliveryTime, cuisines } = req.body;
         const file = req.file;
 
         // Check if a restaurant already exists for the current user
