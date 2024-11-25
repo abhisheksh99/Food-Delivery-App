@@ -12,27 +12,35 @@ declare global {
 export const isAuthenticated = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;
+
     if (!token) {
       return res.status(401).json({
         success: false,
         message: "User not authenticated",
       });
     }
-    // Verify token
-    const decoded = jwt.verify(token, process.env.SECRET_KEY as string) as jwt.JwtPayload;
 
-    // Check if decoding was successful
-    if (!decoded) {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload;
+
+    if (!decoded || !decoded.userId) {
       return res.status(401).json({
         success: false,
         message: "Invalid token",
       });
     }
 
-    req.id = decoded.userId as string; // Ensure userId is a string
+    req.id = decoded.userId as string;
     next();
-  } catch (error) {
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Token expired",
+      });
+    }
+    console.error("Error in isAuthenticated middleware:", error);
     return res.status(500).json({
+      success: false,
       message: "Internal server error",
     });
   }

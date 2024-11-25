@@ -13,11 +13,13 @@ dotenv.config();
 
 // Initialize express
 const app: Application = express();
+// Database connection
+connectDb();
 
 // Middleware
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -25,8 +27,7 @@ app.use(
   })
 );
 
-// Database connection
-connectDb();
+
 
 // Routes
 app.use("/api/v1/user", userRoutes);

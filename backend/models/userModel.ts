@@ -9,7 +9,7 @@ export interface IUser extends Document {
     city: string;
     country: string;
     profilePicture: string;
-    isAdmin: boolean;
+    admin: boolean;
     lastLogin: Date;
     isVerified: boolean;
     resetPasswordToken?: string;
@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String,
       default: "",
     },
-    isAdmin: {
+    admin: {
       type: Boolean,
       default: false,
     },
