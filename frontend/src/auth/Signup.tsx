@@ -2,27 +2,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { SignupInputState, userSignupSchema } from "@/schema/userSchema";
+import { useUserStore } from "@/store/useUserStore";
 import { Loader2, LockKeyhole, Mail, PhoneOutgoing, User } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link} from "react-router-dom";
 
 
 
+
 const Signup = () => {
-    const isloading=false;
     const [input, setInput] = useState<SignupInputState>({
-        name:"",
+        fullname:"",
         email:"",
         password:"", 
         contact:"", 
     });
     const [errors, setErrors] = useState<Partial<SignupInputState>>({});
 
+    const {signup,isLoading} = useUserStore();
+
     const changeEventHandler = (e:ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target;
         setInput({...input, [name]:value});
     }
-    const loginSubmitHandler = (e:FormEvent) => {
+    const loginSubmitHandler = async (e:FormEvent) => {
         e.preventDefault();
         // form validation check start
         const result = userSignupSchema.safeParse(input);
@@ -31,6 +34,9 @@ const Signup = () => {
             setErrors(fieldErrors as Partial<SignupInputState>);
             return;
         }
+        // signup api implementation
+
+        await signup(input)
 
     }
   
@@ -46,12 +52,12 @@ const Signup = () => {
               type="text"
               placeholder="Full Name"
               name="fullname"
-              value={input.name}
+              value={input.fullname}
               onChange={changeEventHandler}
               className="pl-10 focus-visible:ring-1"
             />
             <User className="absolute inset-y-2 left-2 text-gray-500 pointer-events-none" />
-            { errors && <span className="text-xs text-red-500">{errors.name}</span>}
+            { errors && <span className="text-xs text-red-500">{errors.fullname}</span>}
           </div>
         </div>
         <div className="mb-4">
@@ -96,8 +102,9 @@ const Signup = () => {
             { errors && <span className="text-xs text-red-500">{errors.contact}</span>}
           </div>
         </div>
+        
         <div className="mb-10">
-          {isloading ? (
+          {isLoading ? (
             <Button disabled className="w-full bg-orange hover:bg-hoverOrange">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>

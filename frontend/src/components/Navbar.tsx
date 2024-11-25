@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 
+
 const Navbar = () => {
   const cart = [1, 2, 3];
   const loading = false;
@@ -56,7 +57,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between h-14">
         <Link to="/">
           <h1 className="font-bold md:font-extrabold text-2xl">
-            Flavor Fiesta
+            Flavor Fiesta 
           </h1>
         </Link>
         <div className="hidden md:flex items-center gap-10">

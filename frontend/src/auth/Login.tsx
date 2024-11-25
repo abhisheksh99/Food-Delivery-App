@@ -1,25 +1,26 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { LoginInputState, userLoginSchema } from "@/schema/userSchema";
+import { useUserStore } from "@/store/useUserStore";
 import { Loader2, LockKeyhole, Mail } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Login = () => {
-    const isloading=false
   const [input, setInput] = useState<LoginInputState>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<Partial<LoginInputState>>({});
 
+  const { login, isLoading } = useUserStore();
+
   const changeEventHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
-  const loginSubmitHandler =  (e: FormEvent) => {
+  const loginSubmitHandler = async (e: FormEvent) => {
     e.preventDefault();
     const result = userLoginSchema.safeParse(input);
     if (!result.success) {
@@ -27,6 +28,9 @@ const Login = () => {
       setErrors(fieldErrors as Partial<LoginInputState>);
       return;
     }
+
+    // login api implementation
+    await login(input);
   };
 
   return (
@@ -71,7 +75,7 @@ const Login = () => {
           </div>
         </div>
         <div className="mb-10">
-          {isloading ? (
+          {isLoading ? (
             <Button disabled className="w-full bg-orange hover:bg-hoverOrange">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
