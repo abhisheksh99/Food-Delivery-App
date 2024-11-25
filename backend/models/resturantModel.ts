@@ -1,8 +1,8 @@
 import mongoose, { Document } from "mongoose";
 
-interface IResturant extends Document {
+interface IRestaurant extends Document {
   user: mongoose.Schema.Types.ObjectId;
-  resturantName: string;
+  restaurantName: string;
   city: string;
   country: string;
   deliveryTime: number;
@@ -11,14 +11,14 @@ interface IResturant extends Document {
   menus: mongoose.Schema.Types.ObjectId;
 }
 
-const resturantSchema = new mongoose.Schema<IResturant>(
+const restaurantSchema = new mongoose.Schema<IRestaurant>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    resturantName: {
+    restaurantName: {
       type: String,
       required: true,
     },
@@ -52,6 +52,6 @@ const resturantSchema = new mongoose.Schema<IResturant>(
   }
 );
 
-const Resturant = mongoose.model<IResturant>("Resturant", resturantSchema);
+const Restaurant = mongoose.model<IRestaurant>("Restaurant", restaurantSchema);
 
-export default Resturant;
+export default Restaurant;

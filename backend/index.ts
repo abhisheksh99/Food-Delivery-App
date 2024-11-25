@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDb from "./config/connectDb";
-import userRoutes from "./routes/userRoute"
+import userRoutes from "./routes/userRoute";
+import restaurantRoutes from "./routes/restaurantRoute";
 
 // Load environment variables
 dotenv.config();
@@ -27,6 +28,7 @@ connectDb();
 
 // Routes
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/restaurant", restaurantRoutes );
 
 
 // Server
