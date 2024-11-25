@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 import connectDb from "./config/connectDb";
 import userRoutes from "./routes/userRoute";
 import restaurantRoutes from "./routes/restaurantRoute";
-import menuRoutes from "./routes/menuRoute"
+import menuRoutes from "./routes/menuRoute";
+import orderRoutes from "./routes/orderRoute";
 
 // Load environment variables
 dotenv.config();
@@ -31,6 +32,7 @@ connectDb();
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/restaurant", restaurantRoutes );
 app.use("/api/v1/menu", menuRoutes);
+app.use("/api/v1/order", orderRoutes);
 
 
 // Server

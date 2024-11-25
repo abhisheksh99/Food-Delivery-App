@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import uploadImageOnCloudinary from "../utils/imageUpload";
 import Menu from "../models/menuModel";
-import Restaurant from "../models/resturantModel";
+import Restaurant from "../models/restaurantModel";
 
 export const addMenu = async (req: Request, res: Response) => {
   try {
