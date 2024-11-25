@@ -136,11 +136,7 @@ const Navbar = () => {
         </div>
         <div className="md:hidden lg:hidden">
           Mobile responsive
-          <MobileNavbar
-            user={user}
-            logout={logout}
-            isLoading={isLoading}
-          />
+          <MobileNavbar/>
         </div>
       </div>
     </div>
