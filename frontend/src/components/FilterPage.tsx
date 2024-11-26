@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRestaurantStore } from "@/store/useRestaurantStore";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
@@ -10,24 +10,16 @@ export type FilterOptionsState = {
 
 const filterOptions: FilterOptionsState[] = [
   { id: "burger", label: "Burger" },
-  { id: "thali", label: "Thali" },
+  { id: "chicken", label: "chicken" },
   { id: "biryani", label: "Biryani" },
   { id: "momos", label: "Momos" },
 ];
 
 const FilterPage = () => {
-  const [appliedFilter, setAppliedFilter] = useState<string[]>([]);
-
+  const { setAppliedFilter, appliedFilter, resetAppliedFilter } = useRestaurantStore();
   const appliedFilterHandler = (value: string) => {
-    setAppliedFilter(prev => 
-      prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]
-    );
+    setAppliedFilter(value);
   };
-
-  const resetAppliedFilter = () => {
-    setAppliedFilter([]);
-  };
-
   return (
     <div className="md:w-72">
       <div className="flex items-center justify-between">
@@ -41,7 +33,7 @@ const FilterPage = () => {
             checked={appliedFilter.includes(option.label)}
             onClick={() => appliedFilterHandler(option.label)}
           />
-          <Label htmlFor={option.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {option.label}
           </Label>
         </div>

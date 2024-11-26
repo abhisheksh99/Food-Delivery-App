@@ -78,7 +78,7 @@ const App = () => {
         >
           <Route index={true} element={<HeroSection />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/search/:id" element={<SearchPage />} />
+          <Route path="/search/:text" element={<SearchPage />} />
           <Route path="/restaurant/:id" element={<ResturantDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/order/status" element={<Order />} />

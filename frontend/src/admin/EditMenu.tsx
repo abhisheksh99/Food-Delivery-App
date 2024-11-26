@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MenuFormSchema, menuSchema } from "@/schema/menuSchema";
+import { useMenuStore } from "@/store/useMenuStore";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -29,7 +30,6 @@ const EditMenu = ({
     image: undefined,
   });
   const [error, setError] = useState<Partial<MenuFormSchema>>({});
-  const loading=false;
 
 
   // Populate input fields when selectedMenu changes
@@ -51,6 +51,7 @@ const EditMenu = ({
       [name]: type === "number" ? Number(value) : value,
     }));
   };
+  const {isLoading,editMenu} = useMenuStore();
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,7 +64,20 @@ const EditMenu = ({
       
       return;
     }
-    console.log(input);
+    try {
+      const formData = new FormData();
+      formData.append("name", input.name);
+      formData.append("description", input.description);
+      formData.append("price", input.price.toString());
+      if (input.image) {
+        formData.append("image", input.image);
+      }
+      await editMenu(selectedMenu._id,formData);
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
 
   };
 
@@ -141,7 +155,7 @@ const EditMenu = ({
             )}
           </div>
           <DialogFooter className="mt-5">
-            {loading ? (
+            {isLoading ? (
               <Button disabled className="bg-orange hover:bg-hoverOrange">
                 <Loader2 className="mr-2 w-4 h-4 animate-spin " />
                 Please wait

@@ -24,7 +24,7 @@ export type SearchedRestaurant = {
 }
 
 export type RestaurantState = {
-    loading: boolean;
+    isLoading: boolean;
     restaurant: Restaurant | null;
     searchedRestaurant: SearchedRestaurant | null;
     appliedFilter:string[];

@@ -1,20 +1,30 @@
-import { Globe, MapPin, X } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 import FilterPage from "./FilterPage";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { AspectRatio } from "./ui/aspect-ratio";
-import { Card, CardContent, CardFooter } from "./ui/card";
-import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { Skeleton } from "./ui/skeleton";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { Globe, MapPin, X } from "lucide-react";
+import { Card, CardContent, CardFooter } from "./ui/card";
+import { AspectRatio } from "./ui/aspect-ratio";
+import { Skeleton } from "./ui/skeleton";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
+import { Restaurant } from "@/types/restaurantType";
 
 const SearchPage = () => {
-  const { params } = useParams();
+  const params = useParams();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const loading = true;
-  const appliedFilter = ["Filter1", "Filter2", "Filter3"]; 
+  const {
+    isLoading,
+    searchedRestaurant,
+    searchRestaurant,
+    setAppliedFilter,
+    appliedFilter,
+  } = useRestaurantStore();
+
+  useEffect(() => {
+    searchRestaurant(params.text!, searchQuery, appliedFilter);
+  }, [params.text!, appliedFilter]);
 
   return (
     <div className="max-w-7xl mx-auto my-10">
@@ -29,7 +39,12 @@ const SearchPage = () => {
               placeholder="Search by restaurant & cuisines"
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button className="bg-orange hover:bg-hoverOrange">
+            <Button
+              onClick={() =>
+                searchRestaurant(params.text!, searchQuery, appliedFilter)
+              }
+              className="bg-orange hover:bg-hoverOrange"
+            >
               Search
             </Button>
           </div>
@@ -37,7 +52,7 @@ const SearchPage = () => {
           <div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-2 my-3">
               <h1 className="font-medium text-lg">
-                Search result found
+                ({searchedRestaurant?.data.length}) Search result found
               </h1>
               <div className="flex flex-wrap gap-2 mb-4 md:mb-0">
                 {appliedFilter.map(
@@ -47,12 +62,13 @@ const SearchPage = () => {
                       className="relative inline-flex items-center max-w-full"
                     >
                       <Badge
-                        className="text-[#D19254] rounded-md hover:cursor-pointer pr-6 whitespace-nowrap" 
-                        
+                        className="text-[#D19254] rounded-md hover:cursor-pointer pr-6 whitespace-nowrap"
+                        variant="outline"
                       >
                         {selectedFilter}
                       </Badge>
                       <X
+                        onClick={() => setAppliedFilter(selectedFilter)}
                         size={16}
                         className="absolute text-[#D19254] right-1 hover:cursor-pointer"
                       />
@@ -63,69 +79,73 @@ const SearchPage = () => {
             </div>
             {/* Restaurant Cards  */}
             <div className="grid md:grid-cols-3 gap-4">
-              {
-                [1,2,3].map((item:number,idx:number)=> (
+              {isLoading ? (
+                <SearchPageSkeleton />
+              ) : !isLoading && searchedRestaurant?.data.length === 0 ? (
+                <NoResultFound searchText={params.text!} />
+              ) : (
+                searchedRestaurant?.data.map((restaurant: Restaurant) => (
                   <Card
-                  className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
-                >
-                  <div className="relative">
-                    <AspectRatio ratio={16 / 6}>
-                      <img
-                        src=""
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    </AspectRatio>
-                    <div className="absolute top-2 left-2 bg-white dark:bg-gray-700 bg-opacity-75 rounded-lg px-3 py-1">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Featured
-                      </span>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                      Name
-                    </h1>
-                    <div className="mt-2 gap-1 flex items-center text-gray-600 dark:text-gray-400">
-                      <MapPin size={16} />
-                      <p className="text-sm">
-                        City:{" "}
-                        <span className="font-medium">City</span>
-                      </p>
-                    </div>
-                    <div className="mt-2 gap-1 flex items-center text-gray-600 dark:text-gray-400">
-                      <Globe size={16} />
-                      <p className="text-sm">
-                        Country:{" "}
-                        <span className="font-medium">
-                          USA
+                    key={restaurant._id}
+                    className="bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300"
+                  >
+                    <div className="relative">
+                      <AspectRatio ratio={16 / 6}>
+                        <img
+                          src={restaurant.imageUrl}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      </AspectRatio>
+                      <div className="absolute top-2 left-2 bg-white dark:bg-gray-700 bg-opacity-75 rounded-lg px-3 py-1">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Featured
                         </span>
-                      </p>
+                      </div>
                     </div>
-                    <div className="flex gap-2 mt-4 flex-wrap">
-                      {["indian", "chinese", "italian"].map(
-                        (cuisine: string, idx: number) => (
-                          <Badge
-                            key={idx}
-                            className="font-medium px-2 py-1 rounded-full shadow-sm"
-                          >
-                            {cuisine}
-                          </Badge>
-                        )
-                      )}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 border-t dark:border-t-gray-700 border-t-gray-100 text-white flex justify-end">
-                    <Link to={`/restaurant/1`}>
-                      <Button className="bg-orange hover:bg-hoverOrange font-semibold py-2 px-4 rounded-full shadow-md transition-colors duration-200">
-                        View Menus
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
+                    <CardContent className="p-4">
+                      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        {restaurant.restaurantName}
+                      </h1>
+                      <div className="mt-2 gap-1 flex items-center text-gray-600 dark:text-gray-400">
+                        <MapPin size={16} />
+                        <p className="text-sm">
+                          City:{" "}
+                          <span className="font-medium">{restaurant.city}</span>
+                        </p>
+                      </div>
+                      <div className="mt-2 gap-1 flex items-center text-gray-600 dark:text-gray-400">
+                        <Globe size={16} />
+                        <p className="text-sm">
+                          Country:{" "}
+                          <span className="font-medium">
+                            {restaurant.country}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex gap-2 mt-4 flex-wrap">
+                        {restaurant.cuisines.map(
+                          (cuisine: string, idx: number) => (
+                            <Badge
+                              key={idx}
+                              className="font-medium px-2 py-1 rounded-full shadow-sm"
+                            >
+                              {cuisine}
+                            </Badge>
+                          )
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="p-4 border-t dark:border-t-gray-700 border-t-gray-100 text-white flex justify-end">
+                      <Link to={`/restaurant/${restaurant._id}`}>
+                        <Button className="bg-orange hover:bg-hoverOrange font-semibold py-2 px-4 rounded-full shadow-md transition-colors duration-200">
+                          View Menus
+                        </Button>
+                      </Link>
+                    </CardFooter>
+                  </Card>
                 ))
-              }
-
+              )}
             </div>
           </div>
         </div>
@@ -133,6 +153,8 @@ const SearchPage = () => {
     </div>
   );
 };
+
+export default SearchPage;
 
 const SearchPageSkeleton = () => {
   return (
@@ -188,5 +210,3 @@ const NoResultFound = ({ searchText }: { searchText: string }) => {
     </div>
   );
 };
-
-export default SearchPage;

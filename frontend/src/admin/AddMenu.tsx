@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { MenuFormSchema, menuSchema } from "@/schema/menuSchema";
 import { Loader2, Plus } from "lucide-react";
 import EditMenu from "./EditMenu";
+import { useMenuStore } from "@/store/useMenuStore";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
 
 const AddMenu = () => {
   const [input, setInput] = useState<MenuFormSchema>({
@@ -33,6 +35,9 @@ const AddMenu = () => {
     setInput({ ...input, [name]: type === "number" ? Number(value) : value });
   };
 
+  const { isLoading, createMenu } = useMenuStore();
+  const { restaurant } = useRestaurantStore();
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = menuSchema.safeParse(input);
@@ -41,36 +46,20 @@ const AddMenu = () => {
       setError(fieldErrors as Partial<MenuFormSchema>);
       return;
     }
-    console.log(input);
-    
-    
+    // Add menu api integration
+    try {
+      const formData = new FormData();
+      formData.append("name", input.name);
+      formData.append("description", input.description);
+      formData.append("price", input.price.toString());
+      if (input.image) {
+        formData.append("image", input.image);
+      }
+      await createMenu(formData);
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  const loading = false;
-
-  const menus = [
-    {
-      id: 1,
-      name: "Biryani",
-      description: "Afghan biryani",
-      price: 80,
-      image: "",
-    },
-    {
-      id: 2,
-      name: "Tandoori Chicken",
-      description: "Indian special",
-      price: 120,
-      image: "",
-    },
-    {
-      id: 3,
-      name: "Butter Naan",
-      description: "Perfect companion",
-      price: 30,
-      image: "",
-    },
-  ];
 
   return (
     <div className="max-w-6xl mx-auto my-10">
@@ -124,7 +113,7 @@ const AddMenu = () => {
                 )}
               </div>
               <div>
-                <Label>Price in (Rupees)</Label>
+                <Label>Price in (USD)</Label>
                 <Input
                   type="number"
                   name="price"
@@ -157,7 +146,7 @@ const AddMenu = () => {
                 )}
               </div>
               <DialogFooter className="mt-5">
-                {loading ? (
+                {isLoading ? (
                   <Button disabled className="bg-orange hover:bg-hoverOrange">
                     <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                     Please wait
@@ -173,7 +162,7 @@ const AddMenu = () => {
         </Dialog>
       </div>
       <div className="mt-6 space-y-4">
-        {menus.map((menu) => (
+        {restaurant?.menus.map((menu:any) => (
           <div
             key={menu.id}
             className="flex flex-col md:flex-row md:items-center md:space-x-4 md:p-4 p-2 shadow-md rounded-lg border"

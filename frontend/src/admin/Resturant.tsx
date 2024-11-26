@@ -20,7 +20,7 @@ const Resturant = () => {
   });
   const [errors, setErrors] = useState<Partial<RestaurantFormSchema>>({});
 
-  // Explicitly typed useRestaurantStore for TypeScript inference
+
   const {
     createRestaurant,
     isLoading,
