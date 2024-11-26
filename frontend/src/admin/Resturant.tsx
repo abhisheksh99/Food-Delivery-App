@@ -5,8 +5,9 @@ import {
   RestaurantFormSchema,
   restaurantFromSchema,
 } from "@/schema/resturantSchema";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, FormEvent, useEffect } from "react";
 
 const Resturant = () => {
   const [input, setInput] = useState<RestaurantFormSchema>({
@@ -19,32 +20,82 @@ const Resturant = () => {
   });
   const [errors, setErrors] = useState<Partial<RestaurantFormSchema>>({});
 
-  const loading = false;
-  const resturant = false;
+  // Explicitly typed useRestaurantStore for TypeScript inference
+  const {
+    createRestaurant,
+    isLoading,
+    updateRestaurant,
+    restaurant,
+    getRestaurant,
+  } = useRestaurantStore();
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     setInput({ ...input, [name]: type === "number" ? Number(value) : value });
   };
 
-  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = restaurantFromSchema.safeParse(input);
     if (!result.success) {
       const fieldErrors = result.error.formErrors.fieldErrors;
       setErrors(fieldErrors as Partial<RestaurantFormSchema>);
+      return;
     }
-    console.log(input);
+
+    try {
+      const formData = new FormData();
+      formData.append("restaurantName", input.restaurantName);
+      formData.append("city", input.city);
+      formData.append("country", input.country);
+      formData.append("deliveryTime", input.deliveryTime.toString());
+      formData.append("cuisines", JSON.stringify(input.cuisines));
+
+      if (input.imageFile) {
+        formData.append("imageFile", input.imageFile);
+      }
+
+      if (restaurant) {
+        // update
+        await updateRestaurant(formData);
+      } else {
+        // create
+        await createRestaurant(formData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    const fetchRestaurant = async () => {
+      await getRestaurant();
+      if (restaurant) {
+        setInput({
+          restaurantName: restaurant.restaurantName || "",
+          city: restaurant.city || "",
+          country: restaurant.country || "",
+          deliveryTime: restaurant.deliveryTime || 0,
+          cuisines: restaurant.cuisines
+            ? restaurant.cuisines.map((cuisine: string) => cuisine)
+            : [],
+          imageFile: undefined,
+        });
+      }
+    };
+    fetchRestaurant();
+  }, []);
 
   return (
     <div className="max-w-6xl mx-auto my-10">
       <div>
         <div>
-          <h1 className="font-extrabold text-2xl mb-5">Add Restaurants</h1>
+          <h1 className="font-extrabold text-2xl mb-5">
+            {restaurant ? "Update Restaurant" : "Add Restaurants"}
+          </h1>
           <form onSubmit={submitHandler}>
             <div className="md:grid grid-cols-2 gap-6 space-y-2 md:space-y-0">
-              {/* Restaurant Name  */}
+              {/* Restaurant Name */}
               <div>
                 <Label>Restaurant Name</Label>
                 <Input
@@ -54,12 +105,13 @@ const Resturant = () => {
                   onChange={changeEventHandler}
                   placeholder="Enter your restaurant name"
                 />
-                {errors && (
+                {errors?.restaurantName && (
                   <span className="text-xs text-red-600 font-medium">
                     {errors.restaurantName}
                   </span>
                 )}
               </div>
+              {/* City */}
               <div>
                 <Label>City</Label>
                 <Input
@@ -69,12 +121,13 @@ const Resturant = () => {
                   onChange={changeEventHandler}
                   placeholder="Enter your city name"
                 />
-                {errors && (
+                {errors?.city && (
                   <span className="text-xs text-red-600 font-medium">
                     {errors.city}
                   </span>
                 )}
               </div>
+              {/* Country */}
               <div>
                 <Label>Country</Label>
                 <Input
@@ -84,12 +137,13 @@ const Resturant = () => {
                   onChange={changeEventHandler}
                   placeholder="Enter your country name"
                 />
-                {errors && (
+                {errors?.country && (
                   <span className="text-xs text-red-600 font-medium">
                     {errors.country}
                   </span>
                 )}
               </div>
+              {/* Delivery Time */}
               <div>
                 <Label>Delivery Time</Label>
                 <Input
@@ -99,29 +153,31 @@ const Resturant = () => {
                   onChange={changeEventHandler}
                   placeholder="Enter your delivery time"
                 />
-                {errors && (
+                {errors?.deliveryTime && (
                   <span className="text-xs text-red-600 font-medium">
                     {errors.deliveryTime}
                   </span>
                 )}
               </div>
+              {/* Cuisines */}
               <div>
                 <Label>Cuisines</Label>
                 <Input
                   type="text"
                   name="cuisines"
-                  value={input.cuisines}
+                  value={input.cuisines.join(",")}
                   onChange={(e) =>
                     setInput({ ...input, cuisines: e.target.value.split(",") })
                   }
                   placeholder="e.g. Momos, Biryani"
                 />
-                {errors && (
+                {errors?.cuisines && (
                   <span className="text-xs text-red-600 font-medium">
                     {errors.cuisines}
                   </span>
                 )}
               </div>
+              {/* Image Upload */}
               <div>
                 <Label>Upload Restaurant Banner</Label>
                 <Input
@@ -135,22 +191,22 @@ const Resturant = () => {
                   accept="image/*"
                   name="imageFile"
                 />
-                {errors && (
+                {errors?.imageFile && (
                   <span className="text-xs text-red-600 font-medium">
-                    {errors.imageFile?.name || "Image file is required"}
+                    {errors.imageFile}
                   </span>
                 )}
               </div>
             </div>
             <div className="my-5 w-fit">
-              {loading ? (
+              {isLoading ? (
                 <Button disabled className="bg-orange hover:bg-hoverOrange">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Please wait
                 </Button>
               ) : (
                 <Button className="bg-orange hover:bg-hoverOrange">
-                  {resturant ? "Update Resturant" : " Add Your Restaurant"}
+                  {restaurant ? "Update Restaurant" : "Add Your Restaurant"}
                 </Button>
               )}
             </div>
