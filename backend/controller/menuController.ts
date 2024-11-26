@@ -31,7 +31,7 @@ export const addMenu = async (req: Request, res: Response) => {
     const restaurant = await Restaurant.findOneAndUpdate(
       { user: req.id }, // Query to find the restaurant by the user ID
       { $push: { menus: menu._id } }, // Append the new menu ID to the menus array
-      { new: true, useFindAndModify: false } // Optional: Return updated document, disable `findAndModify` warning
+      { new: true} 
     );
 
     // If the restaurant is not found, return an error
