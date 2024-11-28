@@ -1,16 +1,20 @@
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
 } from "./ui/dialog";
-import { Loader2 } from "lucide-react";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { Label } from "./ui/label";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useState, Dispatch, SetStateAction } from "react";
+import { Button } from "./ui/button";
 import { useUserStore } from "@/store/useUserStore";
+import { CheckoutSessionRequest } from "@/types/orderType";
+import { useCartStore } from "@/store/useCartStore";
+import { useRestaurantStore } from "@/store/useRestaurantStore";
+import { useOrderStore } from "@/store/useOrderStore";
+import { Loader2 } from "lucide-react";
 
 const CheckoutConfirmPage = ({
   open,
@@ -19,7 +23,7 @@ const CheckoutConfirmPage = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { user, isLoading } = useUserStore();
+  const { user } = useUserStore();
   const [input, setInput] = useState({
     name: user?.fullname || "",
     email: user?.email || "",
@@ -28,14 +32,32 @@ const CheckoutConfirmPage = ({
     city: user?.city || "",
     country: user?.country || "",
   });
-
+  const { cart } = useCartStore();
+  const { restaurant } = useRestaurantStore();
+  const { createCheckoutSession, isLoading } = useOrderStore();
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
   const checkoutHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(input);
+    // api implementation start from here
+    try {
+      const checkoutData: CheckoutSessionRequest = {
+        cartItems: cart.map((cartItem) => ({
+          menuId: cartItem._id,
+          name: cartItem.name,
+          image: cartItem.image,
+          price: cartItem.price.toString(),
+          quantity: cartItem.quantity.toString(),
+        })),
+        deliveryDetails: input,
+        restaurantId: restaurant?._id as string,
+      };
+      await createCheckoutSession(checkoutData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -47,8 +69,8 @@ const CheckoutConfirmPage = ({
           When you are ready, hit confirm button to finalize your order
         </DialogDescription>
         <form
-          className="md:grid grid-cols-2 gap-2 space-y-1 md:space-y-0"
           onSubmit={checkoutHandler}
+          className="md:grid grid-cols-2 gap-2 space-y-1 md:space-y-0"
         >
           <div>
             <Label>Fullname</Label>

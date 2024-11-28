@@ -22,7 +22,7 @@ export interface Orders extends CheckoutSessionRequest {
     totalAmount:number;
 }
 export type OrderState = {
-    loading:boolean;
+    isLoading:boolean;
     orders:Orders[];
     createCheckoutSession: (checkoutSessionRequest:CheckoutSessionRequest) => Promise<void>;
     getOrderDetails: () => Promise<void>;
