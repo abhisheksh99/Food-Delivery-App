@@ -19,7 +19,8 @@ const RestaurantDetail = () => {
       <div className="w-full">
         <div className="relative w-full h-32 md:h-64 lg:h-72">
           <img
-            src={singleRestaurant?.imageUrl || "Loading..."}
+            src={singleRestaurant?.imageUrl
+              || "Loading..."}
             alt="res_image"
             className="object-cover w-full h-full rounded-lg shadow-lg"
           />
