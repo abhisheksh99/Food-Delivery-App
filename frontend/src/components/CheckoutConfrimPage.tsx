@@ -10,6 +10,7 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useState, Dispatch, SetStateAction } from "react";
+import { useUserStore } from "@/store/useUserStore";
 
 const CheckoutConfirmPage = ({
   open,
@@ -18,14 +19,14 @@ const CheckoutConfirmPage = ({
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const loading = false;
+  const { user, isLoading } = useUserStore();
   const [input, setInput] = useState({
-    name: "",
-    email: "",
-    contact: "",
-    address: "",
-    city: "",
-    country: "",
+    name: user?.fullname || "",
+    email: user?.email || "",
+    contact: user?.contact.toString() || "",
+    address: user?.address || "",
+    city: user?.city || "",
+    country: user?.country || "",
   });
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +62,7 @@ const CheckoutConfirmPage = ({
           <div>
             <Label>Email</Label>
             <Input
+              disabled
               type="email"
               name="email"
               value={input.email}
@@ -104,7 +106,7 @@ const CheckoutConfirmPage = ({
             />
           </div>
           <DialogFooter className="col-span-2 pt-5">
-            {loading ? (
+            {isLoading ? (
               <Button disabled className="bg-orange hover:bg-hoverOrange">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please wait
